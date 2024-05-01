@@ -1,0 +1,11 @@
+{
+  "new_ticket": "*New #ticket{{ .TicketID }} from {{ .FromUsername }}*\n\n{{ .Text }}",
+  "new_comment": "*New message in #ticket{{ .TicketID }} from {{ .FromUsername }}*\n\n{{ .Text }}",
+  "complete_last_ticket": "Complete the previous #ticket",
+  "success_accept_ticket": "✅ The #ticket{{ .TicketID }} was accepted by the agent {{ .FromUsername }}",
+  "success_decline_ticket": "❌ The #ticket{{ .TicketID }} was declined by the agent {{ .FromUsername }}",
+  "accept_ticket": "✅ Accept",
+  "decline_ticket": "❌ Decline",
+  "no_rights": "You do not have sufficient rights to perform this action",
+  "ticket_end": "You have ended the conversation with the user"
+}

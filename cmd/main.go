@@ -30,7 +30,7 @@ func main() {
 	defer done()
 
 	srv, _ := server.NewServer()
-	srv.Run(&ctx)
+	srv.Run(ctx)
 
 	<-ctx.Done()
 	srv.Shutdown()

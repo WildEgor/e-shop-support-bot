@@ -1,4 +1,4 @@
-package config
+package configs
 
 import (
 	"github.com/caarlos0/env/v7"
@@ -7,14 +7,9 @@ import (
 
 // AppConfig holds the main app configurations
 type AppConfig struct {
-	Name    string `env:"APP_NAME" envDefault:"app"`
-	RPCPort string `env:"APP_GRPC_PORT" envDefault:"8887"`
-	Port    string `env:"APP_PORT" envDefault:"8888"`
-	Mode    string `env:"APP_MODE,required"`
-
-	// Additional  metadata
-	GoEnv   string `env:"GO_ENV" envDefault:"local"`
-	Version string `env:"VERSION" envDefault:"local"`
+	Name string `env:"APP_NAME" envDefault:"app"`
+	Port string `env:"APP_PORT" envDefault:"8888"`
+	Mode string `env:"APP_MODE,required"`
 }
 
 func NewAppConfig(c *Configurator) *AppConfig {

@@ -1,0 +1,16 @@
+{
+  "hello": "Hello, {{ .Username }}, write your question we will help",
+  "new_message": "*New message #ticket{{ .TicketID }} from {{ .FromFirstName }}*\n\n{{ .Text }}",
+  "queue_start": "You are in queue, your question has been transferred, please wait for a operator to join you",
+  "room_start": "The operator has already joined you, write your questions in this chat",
+  "ticket_accepted": "{{ .FromUsername }}, an operator has accept #ticket{{ .TicketID }}",
+  "got_ticket": "{{ .FromUsername }}, your #ticket{{ .TicketID }} send to support, wait",
+  "ticket_declined": "Your #ticket{{ .TicketID }} has been rejected. If you believe that the request was rejected without meaning, then try again",
+  "operator_break": "The conversation with the operator has been completed",
+  "leave_rating": "Leave rating for #ticket{{ .TicketID }}",
+  "feedback_received": "Thank you, your feedback for #ticket{{ .TicketID }} received!",
+  "rating_ok": "Good",
+  "rating_normal": "Ok",
+  "rating_bad": "Bad",
+  "no_rating": "Not leave feedback"
+}

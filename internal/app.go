@@ -3,60 +3,78 @@ package pkg
 import (
 	"context"
 	"fmt"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/config"
+	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/adapters"
+	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/adapters/telegram"
+	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/configs"
 	eh "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/handlers/errors"
 	nfm "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/middlewares/not_found"
 	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/router"
+	slogger "github.com/WildEgor/e-shop-gopack/pkg/libs/logger/handlers"
+	"github.com/WildEgor/e-shop-gopack/pkg/libs/logger/models"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/cors"
 	"github.com/gofiber/fiber/v3/middleware/recover"
 	"github.com/gofiber/template/html/v2"
 	"github.com/google/wire"
 	"log/slog"
-	"os"
 )
 
 var AppSet = wire.NewSet(
 	NewApp,
-	config.ConfigsSet,
+	configs.ConfigsSet,
 	router.RouterSet,
+	adapters.AdaptersSet,
 )
 
 // Server represents the main server configuration.
 type Server struct {
 	App       *fiber.App
-	AppConfig *config.AppConfig
+	Bot       *telegram.TelegramListener
+	AppConfig *configs.AppConfig
 }
 
-func (srv *Server) Run(ctx *context.Context) {
-	slog.Info("server is listening")
+func (srv *Server) Run(ctx context.Context) {
+	go func() {
+		slog.Debug("server is listening")
+		if err := srv.App.Listen(fmt.Sprintf(":%s", srv.AppConfig.Port)); err != nil {
+			panic(err)
+		}
+	}()
 
-	if err := srv.App.Listen(fmt.Sprintf(":%s", srv.AppConfig.Port)); err != nil {
-		slog.Error("unable to start server")
-	}
+	srv.Bot.ListenUpdates(ctx)
 }
 
 func (srv *Server) Shutdown() {
-	slog.Info("shutdown service")
+	slog.Debug("shutdown bot")
+	srv.Bot.Stop()
+
+	slog.Debug("shutdown service")
 	if err := srv.App.Shutdown(); err != nil {
-		slog.Error("unable to shutdown server")
+		slog.Error("unable to shutdown server.", models.LogEntryAttr(&models.LogEntry{
+			Err: err,
+		}))
 	}
 }
 
 func NewApp(
-	ac *config.AppConfig,
+	ac *configs.AppConfig,
 	eh *eh.ErrorsHandler,
 	prr *router.PrivateRouter,
 	pbr *router.PublicRouter,
 	sr *router.SwaggerRouter,
+	bot *telegram.TelegramListener,
+	pc *configs.PostgresConfig,
 ) *Server {
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-		Level: slog.LevelDebug,
-	}))
+	logger := slogger.NewLogger(
+		slogger.WithOrganization(ac.Name),
+	)
 	if ac.IsProduction() {
-		logger = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-			Level: slog.LevelInfo,
-		}))
+		logger = slogger.NewLogger(
+			slogger.WithOrganization(ac.Name),
+			slogger.WithLevel("info"),
+			slogger.WithOutput("stdout"),
+			slogger.WithFormat("json"),
+		)
 	}
 	slog.SetDefault(logger)
 
@@ -79,8 +97,13 @@ func NewApp(
 	// 404 handler
 	app.Use(nfm.NewNotFound())
 
+	if !ac.IsProduction() {
+		RunMigrate(pc.MigrationURI())
+	}
+
 	return &Server{
 		App:       app,
+		Bot:       bot,
 		AppConfig: ac,
 	}
 }

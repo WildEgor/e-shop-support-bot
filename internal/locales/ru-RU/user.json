@@ -1,0 +1,16 @@
+{
+  "hello": "Здравствуйте, {{ .Username }}, напишите ваш вопрос и мы вам поможем",
+  "new_message": "*Новое сообщение по #ticket{{ .TicketID }} от {{ .FromFirstName }}*\n\n{{ .Text }}",
+  "queue_start": "Вы в очереди, ваш вопрос будет обработан в ближайшее время, пожалуйста дождитесь оператора",
+  "room_start": "Оператор присоединился, пожалуйста напишите ваш вопрос",
+  "ticket_accepted": "{{ .FromUsername }}, оператор взял в работу ваш #ticket{{ .TicketID }}",
+  "got_ticket": "{{ .FromUsername }}, ваш #ticket{{ .TicketID }} отправлен в поддержку, ожидайте",
+  "ticket_declined": "Ваш #ticket{{ .TicketID }} был отклонен. Попробуйте позже",
+  "operator_break": "Оператор завершил разговор",
+  "leave_rating": "Оставьте отзыв для #ticket{{ .TicketID }}",
+  "feedback_received": "Спасибо, ваш отзыв на #ticket{{ .TicketID }} получен!",
+  "rating_ok": "Хорошо",
+  "rating_normal": "Нормально",
+  "rating_bad": "Плохо",
+  "no_rating": "Не оставлять отзыв"
+}

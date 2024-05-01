@@ -1,0 +1,11 @@
+{
+  "new_ticket": "*Новый #ticket{{ .TicketID }} от пользователя {{ .FromUsername }}*\n\n{{ .Text }}",
+  "new_comment": "*Новое сообщение в #ticket{{ .TicketID }} от {{ .FromUsername }}*\n\n{{ .Text }}",
+  "complete_last_ticket": "Завершите предыдущий #ticket",
+  "success_accept_ticket": "✅ Запрос был взят в работу агентом {{ .FromUsername }}",
+  "success_decline_ticket": "❌ Запрос был отклонен агентом {{ .FromUsername }}",
+  "accept_ticket": "✅ Подтвердить",
+  "decline_ticket": "❌ Отклонить",
+  "no_rights": "У вас недостаточно прав для этого действия",
+  "ticket_end": "Вы завершили чат с пользователем"
+}

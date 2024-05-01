@@ -37,7 +37,7 @@ func (r *PublicRouter) Setup(app *fiber.App) {
 		})
 	})
 
-	app.Get("/api/v1/livez", healthcheck.NewHealthChecker(healthcheck.Config{
+	v1.Get("/livez", healthcheck.NewHealthChecker(healthcheck.Config{
 		Probe: func(ctx fiber.Ctx) bool {
 			if err := r.hch.Handle(ctx); err != nil {
 				slog.Error("error not healthy")
@@ -49,7 +49,7 @@ func (r *PublicRouter) Setup(app *fiber.App) {
 			return true
 		},
 	}))
-	app.Get("/api/v1/readyz", healthcheck.NewHealthChecker(healthcheck.Config{
+	v1.Get("/readyz", healthcheck.NewHealthChecker(healthcheck.Config{
 		Probe: func(ctx fiber.Ctx) bool {
 			if err := r.rch.Handle(ctx); err != nil {
 				slog.Error("error not ready")
