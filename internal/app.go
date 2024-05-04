@@ -3,14 +3,14 @@ package pkg
 import (
 	"context"
 	"fmt"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/adapters"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/adapters/telegram"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/configs"
-	eh "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/handlers/errors"
-	nfm "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/middlewares/not_found"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/router"
 	slogger "github.com/WildEgor/e-shop-gopack/pkg/libs/logger/handlers"
 	"github.com/WildEgor/e-shop-gopack/pkg/libs/logger/models"
+	"github.com/WildEgor/e-shop-support-bot/internal/adapters"
+	"github.com/WildEgor/e-shop-support-bot/internal/adapters/telegram"
+	"github.com/WildEgor/e-shop-support-bot/internal/configs"
+	eh "github.com/WildEgor/e-shop-support-bot/internal/handlers/errors"
+	nfm "github.com/WildEgor/e-shop-support-bot/internal/middlewares/not_found"
+	"github.com/WildEgor/e-shop-support-bot/internal/router"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/cors"
 	"github.com/gofiber/fiber/v3/middleware/recover"
@@ -61,6 +61,7 @@ func NewApp(
 	eh *eh.ErrorsHandler,
 	prr *router.PrivateRouter,
 	pbr *router.PublicRouter,
+	br *router.BotRouter,
 	sr *router.SwaggerRouter,
 	bot *telegram.TelegramListener,
 	pc *configs.PostgresConfig,
@@ -90,6 +91,7 @@ func NewApp(
 	}))
 	app.Use(recover.New())
 
+	br.Setup()
 	prr.Setup(app)
 	pbr.Setup(app)
 	sr.Setup(app)

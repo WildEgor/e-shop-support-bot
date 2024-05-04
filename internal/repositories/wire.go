@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/db"
+	"github.com/WildEgor/e-shop-support-bot/internal/db"
 	"github.com/google/wire"
 )
 

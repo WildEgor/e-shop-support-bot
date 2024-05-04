@@ -9,7 +9,8 @@ import (
 // TelegramConfig holds the main app configurations
 type TelegramConfig struct {
 	Token  string `env:"TELEGRAM_BOT_TOKEN,required"`
-	Prefix string `env:"TELEGRAM_BOT_PREFIX" envDefault:"g_supporter_bot"`
+	Prefix string `env:"TELEGRAM_BOT_PREFIX,required"`
+	Debug  bool   `env:"TELEGRAM_DEBUG" envDefault:"false"`
 }
 
 func NewTelegramConfig(c *Configurator) *TelegramConfig {

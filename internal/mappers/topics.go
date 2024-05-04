@@ -1,6 +1,6 @@
 package mappers
 
-import "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/models"
+import "github.com/WildEgor/e-shop-support-bot/internal/models"
 
 func FromTopicsTableToModel(table *models.TopicTable) *models.Topic {
 	return &models.Topic{

@@ -1,4 +1,4 @@
-module github.com/WildEgor/e-shop-fiber-microservice-boilerplate
+module github.com/WildEgor/e-shop-support-bot
 
 go 1.22.1
 

@@ -2,11 +2,11 @@ package break_action_handler
 
 import (
 	"context"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/adapters/telegram"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/models"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/repositories"
-	services "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/services/translator"
 	logModels "github.com/WildEgor/e-shop-gopack/pkg/libs/logger/models"
+	"github.com/WildEgor/e-shop-support-bot/internal/adapters/telegram"
+	"github.com/WildEgor/e-shop-support-bot/internal/models"
+	"github.com/WildEgor/e-shop-support-bot/internal/repositories"
+	services "github.com/WildEgor/e-shop-support-bot/internal/services/translator"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log/slog"
 	"time"
@@ -140,6 +140,10 @@ func (h *BreakActionHandler) notifyTopicClosed(ctx context.Context, msg *tgbotap
 				"user_tid": msg.From.ID,
 			},
 		})
+	}
+
+	if topts == nil {
+		return
 	}
 
 	tendMsg := h.ts.GetLocalizedMessage(topts.Lang, models.TicketClosedMessageKey)

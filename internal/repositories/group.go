@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"context"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/db/redis"
+	"github.com/WildEgor/e-shop-support-bot/internal/db/redis"
 	"strconv"
 )
 

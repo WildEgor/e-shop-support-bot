@@ -2,10 +2,10 @@ package edit_message_handler
 
 import (
 	"context"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/adapters/telegram"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/mappers"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/models"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/repositories"
+	"github.com/WildEgor/e-shop-support-bot/internal/adapters/telegram"
+	"github.com/WildEgor/e-shop-support-bot/internal/mappers"
+	"github.com/WildEgor/e-shop-support-bot/internal/models"
+	"github.com/WildEgor/e-shop-support-bot/internal/repositories"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"time"
 )

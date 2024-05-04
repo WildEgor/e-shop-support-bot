@@ -2,9 +2,10 @@ package middlewares
 
 import (
 	"context"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/adapters/telegram"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/models"
+	"github.com/WildEgor/e-shop-support-bot/internal/adapters/telegram"
+	"github.com/WildEgor/e-shop-support-bot/internal/models"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"log/slog"
 )
 
 // AuthMiddleware check if user admin/support for callback actions
@@ -18,6 +19,8 @@ func NewAuthMiddleware() *AuthMiddleware {
 func (m *AuthMiddleware) Next(h telegram.UpdateHandler) telegram.UpdateHandler {
 	return func(ctx context.Context, u tgbotapi.Update) {
 		defer h(ctx, u)
+
+		slog.Debug("Update ID", slog.Int("ID", u.UpdateID))
 
 		// FIXME: dirty solution route user to no_right handler
 		// If callback called with non-support privileges then redirect to no_right handler

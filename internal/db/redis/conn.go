@@ -1,8 +1,8 @@
 package redis
 
 import (
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/configs"
 	"github.com/WildEgor/e-shop-gopack/pkg/libs/logger/models"
+	"github.com/WildEgor/e-shop-support-bot/internal/configs"
 	"github.com/go-redis/redis"
 	"log/slog"
 )

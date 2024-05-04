@@ -1,9 +1,9 @@
 package services_test
 
 import (
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/configs"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/models"
-	services "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/services/translator"
+	"github.com/WildEgor/e-shop-support-bot/internal/configs"
+	"github.com/WildEgor/e-shop-support-bot/internal/models"
+	services "github.com/WildEgor/e-shop-support-bot/internal/services/translator"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

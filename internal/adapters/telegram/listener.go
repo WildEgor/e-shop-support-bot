@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"context"
+	"github.com/WildEgor/e-shop-gopack/pkg/libs/logger/models"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log/slog"
 	"regexp"
@@ -26,6 +27,7 @@ func NewTelegramListener(
 ) *TelegramListener {
 	return &TelegramListener{
 		adapter:              adapter,
+		middlewares:          make([]Middleware, 0),
 		messageHandlers:      make([]messageHandler, 0),
 		editMessageHandler:   func(ctx context.Context, message *tgbotapi.Message) {},
 		callbackQueryMatcher: make(callbackQueryMatcher),
@@ -64,8 +66,6 @@ func (t *TelegramListener) ListenUpdates(ctx context.Context) {
 	slog.Debug("bot is listening")
 
 	h := func(ctx context.Context, update tgbotapi.Update) {
-		slog.Debug("Update ID", slog.Int("ID", update.UpdateID))
-
 		var f = t.handleUpdates
 		for i := len(t.middlewares) - 1; i >= 0; i-- {
 			f = t.middlewares[i](f)
@@ -74,6 +74,13 @@ func (t *TelegramListener) ListenUpdates(ctx context.Context) {
 		go f(ctx, update)
 	}
 
+	slog.Debug("listen updates executed", models.LogEntryAttr(&models.LogEntry{
+		Props: map[string]interface{}{
+			"count_mw": len(t.middlewares),
+			"count_h":  len(t.messageHandlers),
+		},
+	}))
+
 	t.adapter.HandleUpdates(ctx, h)
 }
 
@@ -81,11 +88,16 @@ func (t *TelegramListener) ListenUpdates(ctx context.Context) {
 func (t *TelegramListener) handleUpdates(ctx context.Context, update tgbotapi.Update) {
 	switch {
 	case update.Message != nil:
+		slog.Debug("handle message")
 		t.handleMessage(ctx, update.Message)
 	case update.EditedMessage != nil:
+		slog.Debug("handle edit message")
 		t.editMessageHandler(ctx, update.EditedMessage)
 	case update.CallbackQuery != nil:
+		slog.Debug("handle callback")
 		t.handleCallback(ctx, update.CallbackQuery)
+	default:
+		slog.Warn("No handler")
 	}
 }
 

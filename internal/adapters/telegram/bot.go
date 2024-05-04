@@ -2,8 +2,8 @@ package telegram
 
 import (
 	"context"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/configs"
 	"github.com/WildEgor/e-shop-gopack/pkg/libs/logger/models"
+	"github.com/WildEgor/e-shop-support-bot/internal/configs"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log/slog"
 )
@@ -24,15 +24,14 @@ func NewTelegramBotAdapter(cfg *configs.TelegramConfig) *TelegramBotAdapter {
 		return nil
 	}
 
-	// TODO: only for test
-	bot.Debug = true
-
 	if err != nil {
 		slog.Error("error init bot", models.LogEntryAttr(&models.LogEntry{
 			Err: err,
 		}))
 		panic(err)
 	}
+
+	bot.Debug = cfg.Debug
 
 	return &TelegramBotAdapter{
 		bot:     bot,

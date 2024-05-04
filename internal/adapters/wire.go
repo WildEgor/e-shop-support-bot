@@ -1,7 +1,7 @@
 package adapters
 
 import (
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/adapters/telegram"
+	"github.com/WildEgor/e-shop-support-bot/internal/adapters/telegram"
 	"github.com/google/wire"
 )
 

@@ -1,7 +1,7 @@
 package services
 
 import (
-	services "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/services/translator"
+	services "github.com/WildEgor/e-shop-support-bot/internal/services/translator"
 	"github.com/google/wire"
 )
 

@@ -1,20 +1,20 @@
 package router
 
 import (
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/adapters/telegram"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/configs"
-	accept_callback_handler "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/handlers/accept_callback"
-	break_action_handler "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/handlers/break_action"
-	decline_callback_handler "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/handlers/decline_callback"
-	edit_message_handler "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/handlers/edit_message"
-	new_message_handler "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/handlers/new_message"
-	no_right_callback_handler "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/handlers/not_right_callback"
-	rating_callback_handler "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/handlers/rating_callback"
-	start_action_handler "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/handlers/start_action"
-	middlewares2 "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/middlewares/auth"
-	middlewares "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/middlewares/group"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/models"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/repositories"
+	"github.com/WildEgor/e-shop-support-bot/internal/adapters/telegram"
+	"github.com/WildEgor/e-shop-support-bot/internal/configs"
+	accept_callback_handler "github.com/WildEgor/e-shop-support-bot/internal/handlers/accept_callback"
+	break_action_handler "github.com/WildEgor/e-shop-support-bot/internal/handlers/break_action"
+	decline_callback_handler "github.com/WildEgor/e-shop-support-bot/internal/handlers/decline_callback"
+	edit_message_handler "github.com/WildEgor/e-shop-support-bot/internal/handlers/edit_message"
+	new_message_handler "github.com/WildEgor/e-shop-support-bot/internal/handlers/new_message"
+	no_right_callback_handler "github.com/WildEgor/e-shop-support-bot/internal/handlers/no_right_callback"
+	rating_callback_handler "github.com/WildEgor/e-shop-support-bot/internal/handlers/rating_callback"
+	start_action_handler "github.com/WildEgor/e-shop-support-bot/internal/handlers/start_action"
+	middlewares2 "github.com/WildEgor/e-shop-support-bot/internal/middlewares/auth"
+	middlewares "github.com/WildEgor/e-shop-support-bot/internal/middlewares/group"
+	"github.com/WildEgor/e-shop-support-bot/internal/models"
+	"github.com/WildEgor/e-shop-support-bot/internal/repositories"
 )
 
 type BotRouter struct {
@@ -63,7 +63,7 @@ func NewBotRouter(
 	}
 }
 
-func (r *BotRouter) SetupBotRouter() {
+func (r *BotRouter) Setup() {
 	gmw := middlewares.NewExtractGroupMiddleware(r.uor, r.gr, r.tcfg)
 	amw := middlewares2.NewAuthMiddleware()
 

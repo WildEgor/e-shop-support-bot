@@ -2,7 +2,7 @@ package repositories_test
 
 import (
 	"context"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/models"
+	"github.com/WildEgor/e-shop-support-bot/internal/models"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

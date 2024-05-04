@@ -7,12 +7,24 @@
 package pkg
 
 import (
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/adapters/telegram"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/configs"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/handlers/errors"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/handlers/health_check"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/handlers/ready_check"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/router"
+	"github.com/WildEgor/e-shop-support-bot/internal/adapters/telegram"
+	"github.com/WildEgor/e-shop-support-bot/internal/configs"
+	"github.com/WildEgor/e-shop-support-bot/internal/db/postgres"
+	"github.com/WildEgor/e-shop-support-bot/internal/db/redis"
+	"github.com/WildEgor/e-shop-support-bot/internal/handlers/accept_callback"
+	"github.com/WildEgor/e-shop-support-bot/internal/handlers/break_action"
+	"github.com/WildEgor/e-shop-support-bot/internal/handlers/decline_callback"
+	"github.com/WildEgor/e-shop-support-bot/internal/handlers/edit_message"
+	"github.com/WildEgor/e-shop-support-bot/internal/handlers/errors"
+	"github.com/WildEgor/e-shop-support-bot/internal/handlers/health_check"
+	"github.com/WildEgor/e-shop-support-bot/internal/handlers/new_message"
+	"github.com/WildEgor/e-shop-support-bot/internal/handlers/no_right_callback"
+	"github.com/WildEgor/e-shop-support-bot/internal/handlers/rating_callback"
+	"github.com/WildEgor/e-shop-support-bot/internal/handlers/ready_check"
+	"github.com/WildEgor/e-shop-support-bot/internal/handlers/start_action"
+	"github.com/WildEgor/e-shop-support-bot/internal/repositories"
+	"github.com/WildEgor/e-shop-support-bot/internal/router"
+	"github.com/WildEgor/e-shop-support-bot/internal/services/translator"
 	"github.com/google/wire"
 )
 
@@ -26,12 +38,32 @@ func NewServer() (*Server, error) {
 	healthCheckHandler := health_check_handler.NewHealthCheckHandler()
 	readyCheckHandler := ready_check_handler.NewReadyCheckHandler()
 	publicRouter := router.NewPublicRouter(healthCheckHandler, readyCheckHandler)
-	swaggerRouter := router.NewSwaggerRouter()
 	telegramConfig := configs.NewTelegramConfig(configurator)
 	telegramBotAdapter := telegram.NewTelegramBotAdapter(telegramConfig)
 	telegramListener := telegram.NewTelegramListener(telegramBotAdapter)
+	redisConfig := configs.NewRedisConfig(configurator)
+	redisConnection := redis.NewRedisConnection(redisConfig)
+	userStateRepository := repositories.NewUserStateRepository(redisConnection)
+	translatorConfig := configs.NewTranslatorConfig(configurator)
+	translatorService, err := services.NewTranslatorService(translatorConfig)
+	if err != nil {
+		return nil, err
+	}
+	startActionHandler := start_action_handler.NewStartActionHandler(telegramBotAdapter, userStateRepository, translatorService)
 	postgresConfig := configs.NewPostgresConfig(configurator)
-	server := NewApp(appConfig, errorsHandler, privateRouter, publicRouter, swaggerRouter, telegramListener, postgresConfig)
+	postgresConnection := postgres.NewPostgresConnection(postgresConfig)
+	topicRepository := repositories.NewTopicsRepository(redisConnection, postgresConnection)
+	breakActionHandler := break_action_handler.NewBreakActionHandler(telegramBotAdapter, translatorService, topicRepository, userStateRepository)
+	editMessageHandler := edit_message_handler.NewEditMessageHandler(telegramBotAdapter, userStateRepository)
+	acceptCallbackHandler := accept_callback_handler.NewAcceptCallbackHandler(telegramBotAdapter, translatorService, userStateRepository, topicRepository)
+	declineCallbackHandler := decline_callback_handler.NewDeclineCallbackHandler(telegramBotAdapter, translatorService, topicRepository, userStateRepository)
+	noRightCallbackHandler := no_right_callback_handler.NewNoRightCallbackHandler(translatorService, telegramBotAdapter, userStateRepository)
+	groupRepository := repositories.NewGroupRepository(redisConnection)
+	newMessageHandler := new_message_handler.NewNewMessageHandler(telegramBotAdapter, translatorService, topicRepository, userStateRepository, groupRepository)
+	ratingCallbackHandler := rating_callback_handler.NewRatingCallbackHandler(telegramBotAdapter, translatorService, userStateRepository, topicRepository)
+	botRouter := router.NewBotRouter(telegramConfig, telegramListener, startActionHandler, breakActionHandler, editMessageHandler, acceptCallbackHandler, declineCallbackHandler, noRightCallbackHandler, newMessageHandler, ratingCallbackHandler, userStateRepository, groupRepository)
+	swaggerRouter := router.NewSwaggerRouter()
+	server := NewApp(appConfig, errorsHandler, privateRouter, publicRouter, botRouter, swaggerRouter, telegramListener, postgresConfig)
 	return server, nil
 }
 

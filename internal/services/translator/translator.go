@@ -1,8 +1,8 @@
 package services
 
 import (
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/configs"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/models"
+	"github.com/WildEgor/e-shop-support-bot/internal/configs"
+	"github.com/WildEgor/e-shop-support-bot/internal/models"
 	"github.com/kataras/i18n"
 	"os"
 	"reflect"

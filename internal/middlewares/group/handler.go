@@ -2,10 +2,10 @@ package middlewares
 
 import (
 	"context"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/adapters/telegram"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/configs"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/repositories"
 	logModels "github.com/WildEgor/e-shop-gopack/pkg/libs/logger/models"
+	"github.com/WildEgor/e-shop-support-bot/internal/adapters/telegram"
+	"github.com/WildEgor/e-shop-support-bot/internal/configs"
+	"github.com/WildEgor/e-shop-support-bot/internal/repositories"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log/slog"
 	"strings"
@@ -34,9 +34,14 @@ func (m *ExtractGroupMiddleware) Next(h telegram.UpdateHandler) telegram.UpdateH
 	return func(ctx context.Context, u tgbotapi.Update) {
 		defer h(ctx, u)
 
+		slog.Debug("", slog.Any("update", u.MyChatMember))
+
 		if u.MyChatMember == nil || u.MyChatMember.NewChatMember.Status != "administrator" {
+			slog.Debug("ignore")
 			return
 		}
+
+		slog.Debug("Try save group")
 
 		chatID := u.MyChatMember.Chat.ID
 

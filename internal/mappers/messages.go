@@ -1,7 +1,7 @@
 package mappers
 
 import (
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/models"
+	"github.com/WildEgor/e-shop-support-bot/internal/models"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 

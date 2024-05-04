@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/db/redis"
-	"github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/models"
+	"github.com/WildEgor/e-shop-support-bot/internal/db/redis"
+	"github.com/WildEgor/e-shop-support-bot/internal/models"
 	rediss "github.com/go-redis/redis"
 	"time"
 )

@@ -17,7 +17,7 @@ FROM base as dev
 WORKDIR /app
 COPY . .
 RUN go install -mod=mod github.com/cosmtrek/air
-ENTRYPOINT ["air"]
+CMD ["air", "-c", ".air-unix.toml", "-d"]
 
 # # Test Stage
 # FROM base as test

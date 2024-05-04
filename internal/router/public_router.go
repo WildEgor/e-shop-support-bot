@@ -1,8 +1,8 @@
 package router
 
 import (
-	hch "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/handlers/health_check"
-	rch "github.com/WildEgor/e-shop-fiber-microservice-boilerplate/internal/handlers/ready_check"
+	hch "github.com/WildEgor/e-shop-support-bot/internal/handlers/health_check"
+	rch "github.com/WildEgor/e-shop-support-bot/internal/handlers/ready_check"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/healthcheck"
 	"github.com/gofiber/fiber/v3/middleware/limiter"
