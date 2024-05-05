@@ -123,6 +123,11 @@ func TestTopicRepository_LeaveFeedback(t *testing.T) {
 
 	existedTopic, _ := TopicRepository.CreateUniqueTopic(attrs)
 
+	existedTopic.Support = models.TopicSupport{
+		TelegramId:       3,
+		TelegramUsername: "support",
+	}
+
 	topic, err := TopicRepository.LeaveFeedback(&models.CreateTopicFeedbackAttrs{
 		Topic: existedTopic,
 	})

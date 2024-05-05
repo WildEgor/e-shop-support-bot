@@ -19,3 +19,4 @@ tmp
 # vendor/
 
 .env
+.env.docker

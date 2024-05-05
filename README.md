@@ -24,23 +24,23 @@ Support agents can receive feedback gathered for analytics.
 
 ## Features
 
-- **Question Submission**: Users can submit questions through the Telegram bot interface;
-- **Question Processing**: Incoming questions stored in a database and processed by support group;
-- **Analytics**: Optionally collects statistics like feedbacks for insights into user behavior;
+- [x] **Question Submission**: Users can submit questions through the Telegram bot interface;
+- [x] **Question Processing**: Incoming questions stored in a database and processed by support group;
+- [ ] **Analytics**: Optionally collects statistics like feedbacks for insights into user behavior;
 
 ## Requirements
 
 - [Git](http://git-scm.com/)
 - [Go >= 1.22](https://go.dev/dl/)
 - [Docker](https://www.docker.com/products/docker-desktop/)
-- [Postgres and Redis](https://github.com/WildEgor/e-shop-dot/blob/develop/docker-compose.yaml)
+- [Postgres]()
+- [Redis]()
+- [Optional. Clickhouse]()
 
 ## Quick start
 
-1. Создайте бота с помощью [BotFather](https://t.me/BotFather) ([video instruction](https://www.youtube.com/watch?v=UQrcOj63S2o))
-For example, [eShopSupport](t.me/eshop_support_bot)
-2. Run application locally
-Clone repository, modify environment and run it
+1. Create bot using [BotFather](https://t.me/BotFather) ([video instruction](https://www.youtube.com/watch?v=UQrcOj63S2o)). For example, [eShopSupport](t.me/eshop_support_bot);
+2. Run application locally. Clone repository, modify environment and run it
 ```shell
 git pull https://github.com/WildEgor/e-shop-support-bot &&
 cd e-shop-support-bot &&
@@ -52,18 +52,26 @@ or using Docker
 ```shell
 docker-compose up bot
 ```
+Please, use [this](https://github.com/WildEgor/e-shop-dot/blob/develop/docker-compose.yaml) config if you want run Postgres, Redis and Clickhouse
 
-3. Create group in Telegram, add bot and make it admin. Next you can check saved group id using redis-cli
+3. Create Telegram group,  add bot and make it admin. Next you can check saved group id using redis-cli
 ![img.png](assets/img.png)
 
 In a support group, you will receive "tickets" with user questions. Group users can "accept" or "reject" a ticket. If a ticket is "rejected," a new one can be created.
-![img.png](assets/img1.png)
+![img.png](assets/img_1.png)
+
 
 If the ticket is "accepted," users can discuss the issue through messages to the bot. Messages "duplicate" because I'm testing the functionality with the same account (pay attention to the sender of the message).
-![img.png](assets/img2.png)
+![img.png](assets/img_2.png)
+![img.png](assets/img_3.png)
+![img.png](assets/img_4.png)
+![img.png](assets/img_5.png)
 
 You can find "tickets" in the database table ```public.topics```
-![img.png](assets/img3.png)
+![img.png](assets/img_6.png)
+
+Optional. If run [this service](https://github.com/WildEgor/e-shop-collector) you can find saved events in Clickhouse
+![img.png](assets/img_7.png)
 
 ## Contributing
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/WildEgor/e-shop-gopack/pkg/libs/logger/models"
 	"github.com/WildEgor/e-shop-support-bot/internal/configs"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"log/slog"
@@ -37,6 +38,8 @@ func (p *PostgresConnection) Connect() {
 		}))
 		panic(err)
 	}
+
+	config.ConnConfig.DefaultQueryExecMode = pgx.QueryExecModeSimpleProtocol
 
 	dbpool, err := pgxpool.NewWithConfig(context.TODO(), config)
 	if err != nil {

@@ -5,7 +5,7 @@ import (
 	"log/slog"
 )
 
-// AppConfig holds the main app configurations
+// PublisherConfig holds the main app configurations
 type AppConfig struct {
 	Name string `env:"APP_NAME" envDefault:"app"`
 	Port string `env:"APP_PORT" envDefault:"8888"`

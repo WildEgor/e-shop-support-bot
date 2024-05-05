@@ -6,6 +6,7 @@ import (
 	slogger "github.com/WildEgor/e-shop-gopack/pkg/libs/logger/handlers"
 	"github.com/WildEgor/e-shop-gopack/pkg/libs/logger/models"
 	"github.com/WildEgor/e-shop-support-bot/internal/adapters"
+	"github.com/WildEgor/e-shop-support-bot/internal/adapters/publisher"
 	"github.com/WildEgor/e-shop-support-bot/internal/adapters/telegram"
 	"github.com/WildEgor/e-shop-support-bot/internal/configs"
 	eh "github.com/WildEgor/e-shop-support-bot/internal/handlers/errors"
@@ -30,6 +31,7 @@ var AppSet = wire.NewSet(
 type Server struct {
 	App       *fiber.App
 	Bot       *telegram.TelegramListener
+	Publisher publisher.IEventPublisher
 	AppConfig *configs.AppConfig
 }
 
@@ -54,6 +56,14 @@ func (srv *Server) Shutdown() {
 			Err: err,
 		}))
 	}
+
+	slog.Debug("shutdown publisher")
+	err := srv.Publisher.Close()
+	if err != nil {
+		slog.Error("unable to shutdown publisher.", models.LogEntryAttr(&models.LogEntry{
+			Err: err,
+		}))
+	}
 }
 
 func NewApp(
@@ -64,6 +74,7 @@ func NewApp(
 	br *router.BotRouter,
 	sr *router.SwaggerRouter,
 	bot *telegram.TelegramListener,
+	ps *publisher.RabbitPublisher,
 	pc *configs.PostgresConfig,
 ) *Server {
 	logger := slogger.NewLogger(
@@ -106,6 +117,7 @@ func NewApp(
 	return &Server{
 		App:       app,
 		Bot:       bot,
+		Publisher: ps,
 		AppConfig: ac,
 	}
 }

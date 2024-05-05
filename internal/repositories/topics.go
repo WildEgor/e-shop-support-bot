@@ -4,12 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	logModels "github.com/WildEgor/e-shop-gopack/pkg/libs/logger/models"
+	"github.com/WildEgor/e-shop-support-bot/internal/adapters/publisher"
+	"github.com/WildEgor/e-shop-support-bot/internal/configs"
 	"github.com/WildEgor/e-shop-support-bot/internal/db/postgres"
 	"github.com/WildEgor/e-shop-support-bot/internal/db/redis"
 	"github.com/WildEgor/e-shop-support-bot/internal/mappers"
 	"github.com/WildEgor/e-shop-support-bot/internal/models"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"log/slog"
 	"time"
 )
 
@@ -27,17 +31,23 @@ type ITopicsRepository interface {
 
 // TopicRepository represent access to user topics
 type TopicRepository struct {
-	redis    *redis.RedisConnection
-	postgres *postgres.PostgresConnection
+	redis           *redis.RedisConnection
+	postgres        *postgres.PostgresConnection
+	publisher       publisher.IEventPublisher
+	publisherConfig *configs.PublisherConfig
 }
 
 func NewTopicsRepository(
 	redis *redis.RedisConnection,
 	postgres *postgres.PostgresConnection,
+	publisher publisher.IEventPublisher,
+	publisherConfig *configs.PublisherConfig,
 ) *TopicRepository {
 	return &TopicRepository{
 		redis,
 		postgres,
+		publisher,
+		publisherConfig,
 	}
 }
 
@@ -218,8 +228,6 @@ func (r *TopicRepository) LeaveFeedback(feedback *models.CreateTopicFeedbackAttr
 	feedback.FeedbackId = uuid.New().String()
 	feedback.UpdatedAt = time.Now()
 
-	// TODO: send feedback to gCollector
-
 	query := fmt.Sprintf("UPDATE %s SET feedback_id = @feedback_id, updated_at = @updated_at WHERE id = @id", models.TopicsTable)
 
 	result, err := r.postgres.DB.Exec(context.TODO(), query, pgx.NamedArgs{
@@ -229,6 +237,28 @@ func (r *TopicRepository) LeaveFeedback(feedback *models.CreateTopicFeedbackAttr
 	})
 	if err != nil {
 		return nil, err
+	}
+
+	err = r.publisher.Publish(context.TODO(), r.publisherConfig.Topic, &publisher.Event{
+		Data: &publisher.TopicFeedbackEvent{
+			Pattern: "topic_feedbacks",
+			Data: publisher.TopicFeedbackEventData{
+				ID:                      feedback.FeedbackId,
+				TopicID:                 feedback.Topic.Id,
+				SupportTelegramID:       feedback.Topic.Support.TelegramId,
+				SupportTelegramUsername: feedback.Topic.Support.TelegramUsername,
+				SupportUserID:           "",
+				CreatorTelegramID:       feedback.Topic.Creator.TelegramId,
+				CreatorTelegramUsername: feedback.Topic.Creator.TelegramUsername,
+				Rating:                  feedback.Rating,
+			},
+		},
+	})
+	if err != nil {
+		slog.Error("", logModels.LogEntryAttr(&logModels.LogEntry{
+			Err: err,
+		}))
+		return feedback.Topic, err
 	}
 
 	if result.RowsAffected() == 0 {

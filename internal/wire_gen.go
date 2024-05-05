@@ -7,6 +7,7 @@
 package pkg
 
 import (
+	"github.com/WildEgor/e-shop-support-bot/internal/adapters/publisher"
 	"github.com/WildEgor/e-shop-support-bot/internal/adapters/telegram"
 	"github.com/WildEgor/e-shop-support-bot/internal/configs"
 	"github.com/WildEgor/e-shop-support-bot/internal/db/postgres"
@@ -52,7 +53,12 @@ func NewServer() (*Server, error) {
 	startActionHandler := start_action_handler.NewStartActionHandler(telegramBotAdapter, userStateRepository, translatorService)
 	postgresConfig := configs.NewPostgresConfig(configurator)
 	postgresConnection := postgres.NewPostgresConnection(postgresConfig)
-	topicRepository := repositories.NewTopicsRepository(redisConnection, postgresConnection)
+	publisherConfig := configs.NewPublisherConfig(configurator)
+	rabbitPublisher, err := publisher.NewRabbitPublisher(publisherConfig)
+	if err != nil {
+		return nil, err
+	}
+	topicRepository := repositories.NewTopicsRepository(redisConnection, postgresConnection, rabbitPublisher, publisherConfig)
 	breakActionHandler := break_action_handler.NewBreakActionHandler(telegramBotAdapter, translatorService, topicRepository, userStateRepository)
 	editMessageHandler := edit_message_handler.NewEditMessageHandler(telegramBotAdapter, userStateRepository)
 	acceptCallbackHandler := accept_callback_handler.NewAcceptCallbackHandler(telegramBotAdapter, translatorService, userStateRepository, topicRepository)
@@ -63,7 +69,7 @@ func NewServer() (*Server, error) {
 	ratingCallbackHandler := rating_callback_handler.NewRatingCallbackHandler(telegramBotAdapter, translatorService, userStateRepository, topicRepository)
 	botRouter := router.NewBotRouter(telegramConfig, telegramListener, startActionHandler, breakActionHandler, editMessageHandler, acceptCallbackHandler, declineCallbackHandler, noRightCallbackHandler, newMessageHandler, ratingCallbackHandler, userStateRepository, groupRepository)
 	swaggerRouter := router.NewSwaggerRouter()
-	server := NewApp(appConfig, errorsHandler, privateRouter, publicRouter, botRouter, swaggerRouter, telegramListener, postgresConfig)
+	server := NewApp(appConfig, errorsHandler, privateRouter, publicRouter, botRouter, swaggerRouter, telegramListener, rabbitPublisher, postgresConfig)
 	return server, nil
 }
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	pkg "github.com/WildEgor/e-shop-support-bot/internal"
+	"github.com/WildEgor/e-shop-support-bot/internal/adapters/publisher"
 	"github.com/WildEgor/e-shop-support-bot/internal/configs"
 	postgres2 "github.com/WildEgor/e-shop-support-bot/internal/db/postgres"
 	"github.com/WildEgor/e-shop-support-bot/internal/db/redis"
@@ -51,6 +52,19 @@ func TestMain(m *testing.M) {
 	}
 
 	os.Exit(exitCode)
+}
+
+var _ publisher.IEventPublisher = (*MockEventPublisher)(nil)
+
+type MockEventPublisher struct {
+}
+
+func (m MockEventPublisher) Publish(ctx context.Context, s string, event *publisher.Event) error {
+	return nil
+}
+
+func (m MockEventPublisher) Close() error {
+	return nil
 }
 
 func setup() error {
@@ -117,7 +131,7 @@ func setup() error {
 
 	PostgresConn = postgres2.NewPostgresConnection(postgresConfig)
 
-	TopicRepository = repositories.NewTopicsRepository(RedisConn, PostgresConn)
+	TopicRepository = repositories.NewTopicsRepository(RedisConn, PostgresConn, &MockEventPublisher{}, &configs.PublisherConfig{})
 	GroupRepository = repositories.NewGroupRepository(RedisConn)
 	UserStateRepository = repositories.NewUserStateRepository(RedisConn)
 

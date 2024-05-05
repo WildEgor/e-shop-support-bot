@@ -61,8 +61,14 @@ func (h *RatingCallbackHandler) Handle(ctx context.Context, update *tgbotapi.Cal
 			slog.Error("error leave feedback", logModels.LogEntryAttr(&logModels.LogEntry{
 				Err: err,
 			}))
-			return
+			// return
 		}
+	} else {
+		slog.Warn("something wrong with feedback", logModels.LogEntryAttr(&logModels.LogEntry{
+			Props: map[string]interface{}{
+				"id": data.TopicID,
+			},
+		}))
 	}
 
 	uopts, err := h.uor.GetUserOptions(ctx, update.From.ID)

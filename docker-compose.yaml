@@ -1,5 +1,9 @@
 version: "3.8"
 
+volumes:
+  pg_data:
+  redis_data:
+
 services:
   bot:
     hostname: bot-dev
@@ -12,7 +16,7 @@ services:
       dockerfile: Dockerfile
       target: dev
     env_file:
-      - .env
+      - .env.docker
     volumes:
       - ./:/app
     ports:
