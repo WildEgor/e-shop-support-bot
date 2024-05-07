@@ -33,20 +33,20 @@ type ITopicsRepository interface {
 type TopicRepository struct {
 	redis           *redis.RedisConnection
 	postgres        *postgres.PostgresConnection
-	publisher       publisher.IEventPublisher
+	pubAdapter      *publisher.EventPublisherAdapter
 	publisherConfig *configs.PublisherConfig
 }
 
 func NewTopicsRepository(
 	redis *redis.RedisConnection,
 	postgres *postgres.PostgresConnection,
-	publisher publisher.IEventPublisher,
+	pubAdapter *publisher.EventPublisherAdapter,
 	publisherConfig *configs.PublisherConfig,
 ) *TopicRepository {
 	return &TopicRepository{
 		redis,
 		postgres,
-		publisher,
+		pubAdapter,
 		publisherConfig,
 	}
 }
@@ -239,7 +239,7 @@ func (r *TopicRepository) LeaveFeedback(feedback *models.CreateTopicFeedbackAttr
 		return nil, err
 	}
 
-	err = r.publisher.Publish(context.TODO(), r.publisherConfig.Topic, &publisher.Event{
+	err = r.pubAdapter.Publisher.Publish(context.TODO(), r.publisherConfig.Topic, &publisher.Event{
 		Data: &publisher.TopicFeedbackEvent{
 			Pattern: "topic_feedbacks",
 			Data: publisher.TopicFeedbackEventData{

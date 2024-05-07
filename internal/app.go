@@ -29,10 +29,10 @@ var AppSet = wire.NewSet(
 
 // Server represents the main server configuration.
 type Server struct {
-	App       *fiber.App
-	Bot       *telegram.TelegramListener
-	Publisher publisher.IEventPublisher
-	AppConfig *configs.AppConfig
+	App        *fiber.App
+	Bot        *telegram.TelegramListener
+	PubAdapter *publisher.EventPublisherAdapter
+	AppConfig  *configs.AppConfig
 }
 
 func (srv *Server) Run(ctx context.Context) {
@@ -58,7 +58,7 @@ func (srv *Server) Shutdown() {
 	}
 
 	slog.Debug("shutdown publisher")
-	err := srv.Publisher.Close()
+	err := srv.PubAdapter.Publisher.Close()
 	if err != nil {
 		slog.Error("unable to shutdown publisher.", models.LogEntryAttr(&models.LogEntry{
 			Err: err,
@@ -74,7 +74,7 @@ func NewApp(
 	br *router.BotRouter,
 	sr *router.SwaggerRouter,
 	bot *telegram.TelegramListener,
-	ps *publisher.RabbitPublisher,
+	ps *publisher.EventPublisherAdapter,
 	pc *configs.PostgresConfig,
 ) *Server {
 	logger := slogger.NewLogger(
@@ -115,9 +115,9 @@ func NewApp(
 	}
 
 	return &Server{
-		App:       app,
-		Bot:       bot,
-		Publisher: ps,
-		AppConfig: ac,
+		App:        app,
+		Bot:        bot,
+		PubAdapter: ps,
+		AppConfig:  ac,
 	}
 }

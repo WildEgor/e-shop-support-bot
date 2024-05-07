@@ -54,11 +54,8 @@ func NewServer() (*Server, error) {
 	postgresConfig := configs.NewPostgresConfig(configurator)
 	postgresConnection := postgres.NewPostgresConnection(postgresConfig)
 	publisherConfig := configs.NewPublisherConfig(configurator)
-	rabbitPublisher, err := publisher.NewRabbitPublisher(publisherConfig)
-	if err != nil {
-		return nil, err
-	}
-	topicRepository := repositories.NewTopicsRepository(redisConnection, postgresConnection, rabbitPublisher, publisherConfig)
+	eventPublisherAdapter := publisher.NewEventPublisherAdapter(publisherConfig)
+	topicRepository := repositories.NewTopicsRepository(redisConnection, postgresConnection, eventPublisherAdapter, publisherConfig)
 	breakActionHandler := break_action_handler.NewBreakActionHandler(telegramBotAdapter, translatorService, topicRepository, userStateRepository)
 	editMessageHandler := edit_message_handler.NewEditMessageHandler(telegramBotAdapter, userStateRepository)
 	acceptCallbackHandler := accept_callback_handler.NewAcceptCallbackHandler(telegramBotAdapter, translatorService, userStateRepository, topicRepository)
@@ -69,7 +66,7 @@ func NewServer() (*Server, error) {
 	ratingCallbackHandler := rating_callback_handler.NewRatingCallbackHandler(telegramBotAdapter, translatorService, userStateRepository, topicRepository)
 	botRouter := router.NewBotRouter(telegramConfig, telegramListener, startActionHandler, breakActionHandler, editMessageHandler, acceptCallbackHandler, declineCallbackHandler, noRightCallbackHandler, newMessageHandler, ratingCallbackHandler, userStateRepository, groupRepository)
 	swaggerRouter := router.NewSwaggerRouter()
-	server := NewApp(appConfig, errorsHandler, privateRouter, publicRouter, botRouter, swaggerRouter, telegramListener, rabbitPublisher, postgresConfig)
+	server := NewApp(appConfig, errorsHandler, privateRouter, publicRouter, botRouter, swaggerRouter, telegramListener, eventPublisherAdapter, postgresConfig)
 	return server, nil
 }
 

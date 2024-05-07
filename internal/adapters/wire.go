@@ -10,5 +10,5 @@ var AdaptersSet = wire.NewSet(
 	telegram.NewTelegramBotAdapter,
 	telegram.NewTelegramListener,
 	publisher.NewRabbitPublisher,
-	wire.Bind(new(publisher.IEventPublisher), new(*publisher.RabbitPublisher)),
+	publisher.NewEventPublisherAdapter,
 )
